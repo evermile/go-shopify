@@ -198,6 +198,9 @@ type LineItem struct {
 	DestinationLocation        *Address              `json:"destination_location,omitempty"`
 	AppliedDiscount            *AppliedDiscount      `json:"applied_discount,omitempty"`
 	DiscountAllocations        []DiscountAllocations `json:"discount_allocations,omitempty"`
+	FulfillmentOrderID         int64                 `json:"fulfillment_order_id"`
+	InventoryItemID            int64                 `json:"inventory_item_id"`
+	LineItemID                 int64                 `json:"line_item_id,omitempty"`
 }
 
 type DiscountAllocations struct {
@@ -517,7 +520,7 @@ func (s *OrderServiceOp) GetFulfillment(orderID int64, fulfillmentID int64, opti
 }
 
 // Create a new fulfillment for an order
-func (s *OrderServiceOp) CreateFulfillment(orderID int64, fulfillment Fulfillment) (*Fulfillment, error) {
+func (s *OrderServiceOp) CreateFulfillment(orderID int64, fulfillment FulfillmentOrderRequest) (*Fulfillment, error) {
 	fulfillmentService := &FulfillmentServiceOp{client: s.client, resource: ordersResourceName, resourceID: orderID}
 	return fulfillmentService.Create(fulfillment)
 }

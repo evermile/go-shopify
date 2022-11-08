@@ -12,7 +12,7 @@ type FulfillmentService interface {
 	List(interface{}) ([]Fulfillment, error)
 	Count(interface{}) (int, error)
 	Get(int64, interface{}) (*Fulfillment, error)
-	Create(Fulfillment) (*Fulfillment, error)
+	Create(FulfillmentOrderRequest) (*Fulfillment, error)
 	Update(Fulfillment) (*Fulfillment, error)
 	Complete(int64) (*Fulfillment, error)
 	Transition(int64) (*Fulfillment, error)
@@ -26,7 +26,7 @@ type FulfillmentsService interface {
 	ListFulfillments(int64, interface{}) ([]Fulfillment, error)
 	CountFulfillments(int64, interface{}) (int, error)
 	GetFulfillment(int64, int64, interface{}) (*Fulfillment, error)
-	CreateFulfillment(int64, Fulfillment) (*Fulfillment, error)
+	CreateFulfillment(int64, FulfillmentOrderRequest) (*Fulfillment, error)
 	UpdateFulfillment(int64, Fulfillment) (*Fulfillment, error)
 	CompleteFulfillment(int64, int64) (*Fulfillment, error)
 	TransitionFulfillment(int64, int64) (*Fulfillment, error)
@@ -59,6 +59,19 @@ type Fulfillment struct {
 	Receipt         Receipt    `json:"receipt,omitempty"`
 	LineItems       []LineItem `json:"line_items,omitempty"`
 	NotifyCustomer  bool       `json:"notify_customer"`
+}
+
+type FulfillmentOrderRequestWrapped struct {
+	FulfillmentOrderRequest FulfillmentOrderRequest `json:"fulfillment"`
+}
+
+type FulfillmentOrderRequest struct {
+	Message                     string                      `json:"message,omitempty"`
+	LineItemsByFulfillmentOrder []FulfillmentOrderLineItems `json:"line_items_by_fulfillment_order,omitempty"`
+}
+
+type FulfillmentOrderLineItems struct {
+	FulfillmentOrderID int64 `json:"fulfillment_order_id,omitempty"`
 }
 
 // Receipt represents a Shopify receipt.
@@ -103,12 +116,14 @@ func (s *FulfillmentServiceOp) Get(fulfillmentID int64, options interface{}) (*F
 }
 
 // Create a new fulfillment
-func (s *FulfillmentServiceOp) Create(fulfillment Fulfillment) (*Fulfillment, error) {
+func (s *FulfillmentServiceOp) Create(fulfillmentOrderReq FulfillmentOrderRequest) (*Fulfillment, error) {
 	prefix := FulfillmentPathPrefix(s.resource, s.resourceID)
 	path := fmt.Sprintf("%s.json", prefix)
-	wrappedData := FulfillmentResource{Fulfillment: &fulfillment}
 	resource := new(FulfillmentResource)
-	err := s.client.Post(path, wrappedData, resource)
+	wrapped := FulfillmentOrderRequestWrapped{
+		FulfillmentOrderRequest: fulfillmentOrderReq,
+	}
+	err := s.client.Post(path, wrapped, resource)
 	return resource.Fulfillment, err
 }
 

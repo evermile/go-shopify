@@ -46,3 +46,21 @@ func FulfillmentPathPrefix(resource string, resourceID int64) string {
 	}
 	return prefix
 }
+
+// OrderPathPrefix the prefix for a fulfillment order path
+func OrderPathPrefix(resource string, resourceID int64) string {
+	prefix := "orders"
+	if resource != "" {
+		prefix = fmt.Sprintf("%s/%d/fulfillment_orders.json", resource, resourceID)
+	}
+	return prefix
+}
+
+// Return the prefix for a fulfillment order path
+func FulfillmentOrderPathPrefix(resource string, resourceID int64) string {
+	prefix := "fulfillment_orders"
+	if resource != "" {
+		prefix = fmt.Sprintf("%s/%d/fulfillment_orders.json", resource, resourceID)
+	}
+	return prefix
+}
