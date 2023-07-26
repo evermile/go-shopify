@@ -83,6 +83,7 @@ type Order struct {
 	ID                    int64            `json:"id,omitempty"`
 	Name                  string           `json:"name,omitempty"`
 	Email                 string           `json:"email,omitempty"`
+	AdminGraphAPIID       string           `json:"admin_graphql_api_id,omitempty"`
 	CreatedAt             *time.Time       `json:"created_at,omitempty"`
 	UpdatedAt             *time.Time       `json:"updated_at,omitempty"`
 	CancelledAt           *time.Time       `json:"cancelled_at,omitempty"`
