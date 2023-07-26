@@ -1,4 +1,4 @@
-module github.com/evermile-ivo/go-shopify
+module github.com/evermile/go-shopify
 
 go 1.19
 
